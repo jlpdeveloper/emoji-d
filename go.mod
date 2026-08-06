@@ -1,3 +1,3 @@
-module github.com/jlpdeveloper/emoji-d
+module github.com/jlpdeveloper/emojid
 
 go 1.26.5
