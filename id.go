@@ -28,8 +28,7 @@ func (i *ID) Scan(value any) error {
 			return err
 		}
 		i.value = s
-	case types.Nil:
-	case nil:
+	case nil, types.Nil:
 		return errors.New("value cannot be nil")
 	default:
 		return errors.New("typeof value is unsupported")
@@ -70,6 +69,27 @@ func (i *ID) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	i.value = *v
+	return nil
+}
+
+// MarshalText implements the encoding.TextMarshaler interface. It returns the
+// text representation of the ID.
+func (i *ID) MarshalText() ([]byte, error) {
+	if i.value == "" {
+		return []byte{}, errors.New("value is invalid")
+	}
+	return []byte(i.value), nil
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface. It validates
+// the text and stores the result in the ID.
+func (i *ID) UnmarshalText(text []byte) error {
+	v := string(text)
+	err := validateStr(v)
+	if err != nil {
+		return err
+	}
+	i.value = v
 	return nil
 }
 

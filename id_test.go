@@ -44,7 +44,7 @@ func TestID_Scan(t *testing.T) {
 			name:    "Scan nil",
 			input:   nil,
 			wantErr: true,
-			errStr:  "typeof value is unsupported",
+			errStr:  "value cannot be nil",
 		},
 		{
 			name:    "Scan types.Nil",
@@ -215,6 +215,80 @@ func TestID_UnmarshalJSON(t *testing.T) {
 			}
 			if tt.wantErr && tt.errStr != "" && err.Error() != tt.errStr {
 				t.Errorf("ID.UnmarshalJSON() error = %v, wantErrStr %v", err, tt.errStr)
+			}
+		})
+	}
+}
+
+func TestID_MarshalText(t *testing.T) {
+	tests := []struct {
+		name    string
+		id      ID
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "Marshal valid",
+			id:      ID{value: "🚀"},
+			want:    "🚀",
+			wantErr: false,
+		},
+		{
+			name:    "Marshal empty",
+			id:      ID{value: ""},
+			want:    "",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.id.MarshalText()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ID.MarshalText() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if string(got) != tt.want {
+				t.Errorf("ID.MarshalText() = %s, want %s", string(got), tt.want)
+			}
+		})
+	}
+}
+
+func TestID_UnmarshalText(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		wantErr bool
+		errStr  string
+	}{
+		{
+			name:    "Unmarshal valid",
+			input:   "🔥",
+			wantErr: false,
+		},
+		{
+			name:    "Unmarshal invalid emoji",
+			input:   "abc",
+			wantErr: true,
+			errStr:  "value is not in curated list of emoji",
+		},
+		{
+			name:    "Unmarshal empty string",
+			input:   "",
+			wantErr: true,
+			errStr:  "value must not be empty",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			id := &ID{}
+			err := id.UnmarshalText([]byte(tt.input))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ID.UnmarshalText() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.wantErr && tt.errStr != "" && err.Error() != tt.errStr {
+				t.Errorf("ID.UnmarshalText() error = %v, wantErrStr %v", err, tt.errStr)
 			}
 		})
 	}
