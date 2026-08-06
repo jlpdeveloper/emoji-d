@@ -29,6 +29,7 @@ func (i *ID) Scan(value any) error {
 		}
 		i.value = s
 	case types.Nil:
+	case nil:
 		return errors.New("value cannot be nil")
 	default:
 		return errors.New("typeof value is unsupported")
