@@ -46,13 +46,13 @@ func (i ID) Value() (driver.Value, error) {
 }
 
 // String returns the string representation of the ID.
-func (i *ID) String() string {
+func (i ID) String() string {
 	return i.value
 }
 
 // MarshalJSON implements the json.Marshaler interface. It returns the
 // JSON encoding of the ID.
-func (i *ID) MarshalJSON() ([]byte, error) {
+func (i ID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(i.value)
 }
 
@@ -74,7 +74,7 @@ func (i *ID) UnmarshalJSON(data []byte) error {
 
 // MarshalText implements the encoding.TextMarshaler interface. It returns the
 // text representation of the ID.
-func (i *ID) MarshalText() ([]byte, error) {
+func (i ID) MarshalText() ([]byte, error) {
 	if i.value == "" {
 		return []byte{}, errors.New("value is invalid")
 	}
