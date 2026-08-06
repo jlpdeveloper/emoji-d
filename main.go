@@ -1,14 +1,18 @@
 package emojid
 
 import (
+	"database/sql/driver"
 	"errors"
 	"go/types"
 )
 
+// ID represents a unique identifier validated against a curated list of emojis.
 type ID struct {
 	value string
 }
 
+// Scan implements the sql.Scanner interface. It validates that the value
+// is a string or []byte and matches the curated emoji list.
 func (i *ID) Scan(value any) error {
 
 	switch v := value.(type) {
@@ -29,4 +33,18 @@ func (i *ID) Scan(value any) error {
 		return errors.New("typeof value is unsupported")
 	}
 	return nil
+}
+
+// Value implements the driver.Valuer interface. It returns the string value
+// or an error if the value is not defined.
+func (i *ID) Value() (driver.Value, error) {
+	if i.value == "" {
+		return nil, errors.New("value is not defined")
+	}
+	return i.value, nil
+}
+
+// String returns the string representation of the ID.
+func (i *ID) String() string {
+	return i.value
 }

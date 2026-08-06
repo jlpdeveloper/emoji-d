@@ -80,3 +80,63 @@ func TestID_Scan(t *testing.T) {
 		})
 	}
 }
+
+func TestID_Value(t *testing.T) {
+	tests := []struct {
+		name    string
+		id      ID
+		want    any
+		wantErr bool
+	}{
+		{
+			name:    "Value defined",
+			id:      ID{value: "🚀"},
+			want:    "🚀",
+			wantErr: false,
+		},
+		{
+			name:    "Value not defined",
+			id:      ID{value: ""},
+			want:    nil,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.id.Value()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ID.Value() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("ID.Value() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestID_String(t *testing.T) {
+	tests := []struct {
+		name string
+		id   ID
+		want string
+	}{
+		{
+			name: "String defined",
+			id:   ID{value: "🔥"},
+			want: "🔥",
+		},
+		{
+			name: "String empty",
+			id:   ID{value: ""},
+			want: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.id.String(); got != tt.want {
+				t.Errorf("ID.String() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
