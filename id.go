@@ -71,3 +71,8 @@ func (i *ID) UnmarshalJSON(data []byte) error {
 	i.value = *v
 	return nil
 }
+
+// IsValid returns true if the ID has a non-empty value.
+func (i *ID) IsValid() bool {
+	return i.value != ""
+}
