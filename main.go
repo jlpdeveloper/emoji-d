@@ -2,6 +2,7 @@ package emojid
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"errors"
 	"go/types"
 )
@@ -47,4 +48,26 @@ func (i *ID) Value() (driver.Value, error) {
 // String returns the string representation of the ID.
 func (i *ID) String() string {
 	return i.value
+}
+
+// MarshalJSON implements the json.Marshaler interface. It returns the
+// JSON encoding of the ID.
+func (i *ID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(i.value)
+}
+
+// UnmarshalJSON implements the json.Unmarshaler interface. It validates
+// the JSON-encoded data and stores the result in the ID.
+func (i *ID) UnmarshalJSON(data []byte) error {
+	v := new("")
+	err := json.Unmarshal(data, v)
+	if err != nil {
+		return err
+	}
+	err = validateStr(*v)
+	if err != nil {
+		return err
+	}
+	i.value = *v
+	return nil
 }

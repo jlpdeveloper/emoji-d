@@ -140,3 +140,82 @@ func TestID_String(t *testing.T) {
 		})
 	}
 }
+
+func TestID_MarshalJSON(t *testing.T) {
+	tests := []struct {
+		name    string
+		id      ID
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "Marshal valid",
+			id:      ID{value: "🚀"},
+			want:    `"🚀"`,
+			wantErr: false,
+		},
+		{
+			name:    "Marshal empty",
+			id:      ID{value: ""},
+			want:    `""`,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.id.MarshalJSON()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ID.MarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if string(got) != tt.want {
+				t.Errorf("ID.MarshalJSON() = %s, want %s", string(got), tt.want)
+			}
+		})
+	}
+}
+
+func TestID_UnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		wantErr bool
+		errStr  string
+	}{
+		{
+			name:    "Unmarshal valid",
+			input:   `"🔥"`,
+			wantErr: false,
+		},
+		{
+			name:    "Unmarshal invalid emoji",
+			input:   `"abc"`,
+			wantErr: true,
+			errStr:  "value is not in curated list of emoji",
+		},
+		{
+			name:    "Unmarshal empty string",
+			input:   `""`,
+			wantErr: true,
+			errStr:  "value must not be empty",
+		},
+		{
+			name:    "Unmarshal invalid JSON",
+			input:   `{invalid}`,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			id := &ID{}
+			err := id.UnmarshalJSON([]byte(tt.input))
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ID.UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.wantErr && tt.errStr != "" && err.Error() != tt.errStr {
+				t.Errorf("ID.UnmarshalJSON() error = %v, wantErrStr %v", err, tt.errStr)
+			}
+		})
+	}
+}
