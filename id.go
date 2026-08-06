@@ -38,7 +38,7 @@ func (i *ID) Scan(value any) error {
 
 // Value implements the driver.Valuer interface. It returns the string value
 // or an error if the value is not defined.
-func (i *ID) Value() (driver.Value, error) {
+func (i ID) Value() (driver.Value, error) {
 	if i.value == "" {
 		return nil, errors.New("value is not defined")
 	}
