@@ -6,6 +6,9 @@ import (
 	"unicode/utf8"
 )
 
+// validateStr checks if the given string is a valid emoji ID by ensuring
+// it is not empty, is valid UTF-8, and contains only runes from the
+// curated emoji list.
 func validateStr(s string) error {
 	if strings.TrimSpace(s) == "" {
 		return errors.New("value must not be empty")
